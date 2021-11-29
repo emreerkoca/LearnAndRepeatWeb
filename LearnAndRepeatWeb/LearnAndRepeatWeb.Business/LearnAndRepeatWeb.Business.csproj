@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LearnAndRepeatWeb.Contracts\LearnAndRepeatWeb.Contracts.csproj" />
+    <ProjectReference Include="..\LearnAndRepeatWeb.Infrastructure\LearnAndRepeatWeb.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

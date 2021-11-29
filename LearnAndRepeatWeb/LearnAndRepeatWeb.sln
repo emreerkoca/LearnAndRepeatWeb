@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnAndRepeatWeb.Core", "LearnAndRepeatWeb.Core\LearnAndRepeatWeb.Core.csproj", "{A7EB6333-2AAD-40A7-AD14-F2DF953F0EB5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnAndRepeatWeb.Infrastructure", "LearnAndRepeatWeb.Infrastructure\LearnAndRepeatWeb.Infrastructure.csproj", "{647BC50F-6BE5-456D-97E2-DFD0F0E0A424}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearnAndRepeatWeb.Api", "LearnAndRepeatWeb.Api\LearnAndRepeatWeb.Api.csproj", "{045AA0E3-D6FA-46C1-BAA1-611F6305BD51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnAndRepeatWeb.Api", "LearnAndRepeatWeb.Api\LearnAndRepeatWeb.Api.csproj", "{045AA0E3-D6FA-46C1-BAA1-611F6305BD51}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnAndRepeatWeb.Business", "LearnAndRepeatWeb.Business\LearnAndRepeatWeb.Business.csproj", "{0CB76B44-F2D5-41E2-8320-44864890ABD6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearnAndRepeatWeb.Contracts", "LearnAndRepeatWeb.Contracts\LearnAndRepeatWeb.Contracts.csproj", "{0A527DC8-C171-4FA3-B4AD-21A0D066317A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A7EB6333-2AAD-40A7-AD14-F2DF953F0EB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7EB6333-2AAD-40A7-AD14-F2DF953F0EB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7EB6333-2AAD-40A7-AD14-F2DF953F0EB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7EB6333-2AAD-40A7-AD14-F2DF953F0EB5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{647BC50F-6BE5-456D-97E2-DFD0F0E0A424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{647BC50F-6BE5-456D-97E2-DFD0F0E0A424}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{647BC50F-6BE5-456D-97E2-DFD0F0E0A424}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +25,14 @@ Global
 		{045AA0E3-D6FA-46C1-BAA1-611F6305BD51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{045AA0E3-D6FA-46C1-BAA1-611F6305BD51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{045AA0E3-D6FA-46C1-BAA1-611F6305BD51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CB76B44-F2D5-41E2-8320-44864890ABD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CB76B44-F2D5-41E2-8320-44864890ABD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CB76B44-F2D5-41E2-8320-44864890ABD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CB76B44-F2D5-41E2-8320-44864890ABD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A527DC8-C171-4FA3-B4AD-21A0D066317A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A527DC8-C171-4FA3-B4AD-21A0D066317A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A527DC8-C171-4FA3-B4AD-21A0D066317A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A527DC8-C171-4FA3-B4AD-21A0D066317A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace LearnAndRepeatWeb.Infrastructure.Data
+namespace LearnAndRepeatWeb.Infrastructure.DatabaseMigrations
 {
     public class FluentMigratorConfigurator
     {

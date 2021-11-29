@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LearnAndRepeatWeb.Business\LearnAndRepeatWeb.Business.csproj" />
     <ProjectReference Include="..\LearnAndRepeatWeb.Infrastructure\LearnAndRepeatWeb.Infrastructure.csproj" />
   </ItemGroup>
 
