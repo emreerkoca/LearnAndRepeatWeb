@@ -24,8 +24,6 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
         public async Task<PostUserResponse> PostUser(PostUserRequest postUserRequest)
         {
-            //validations
-
             var userModel = new UserModel
             {
                 Email = postUserRequest.Email,

@@ -1,5 +1,7 @@
+using FluentValidation.AspNetCore;
 using LearnAndRepeatWeb.Business.Services.Implementations;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
+using LearnAndRepeatWeb.Business.Validators.User;
 using LearnAndRepeatWeb.Infrastructure.AppDbContext;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,7 +26,12 @@ namespace LearnAndRepeatWeb.Api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(s =>
+                {
+                    s.RegisterValidatorsFromAssemblyContaining<PostUserRequestValidator>();
+                    s.DisableDataAnnotationsValidation = true;
+                });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LearnAndRepeatWeb.Api", Version = "v1" });
