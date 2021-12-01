@@ -16,8 +16,10 @@ namespace LearnAndRepeatWeb.Infrastructure.DatabaseMigrations.Migrations
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity()
                 .WithColumn("FirstName").AsString().NotNullable()
                 .WithColumn("LastName").AsString().NotNullable()
-                .WithColumn("Email").AsString().NotNullable()
+                .WithColumn("Email").AsString().NotNullable().Unique()
                 .WithColumn("Password").AsString().NotNullable()
+                .WithColumn("Salt").AsString().NotNullable()
+                .WithColumn("IsDeleted").AsBoolean().NotNullable().WithDefaultValue(0)
                 .WithColumn("CreateDate").AsDateTime2().NotNullable()
                 .WithColumn("UpdateDate").AsDateTime2().NotNullable();
         }

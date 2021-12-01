@@ -9,6 +9,14 @@ namespace LearnAndRepeatWeb.Infrastructure.AppDbContext
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserModel>().HasQueryFilter(m => !m.IsDeleted);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserModel).Assembly);
+           
+            base.OnModelCreating(modelBuilder);
+        }
+
         public DbSet<UserModel> User { get; set; }
     }
 }
