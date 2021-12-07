@@ -1,4 +1,7 @@
-﻿using LearnAndRepeatWeb.Business.Services.Interfaces;
+﻿using AutoMapper;
+using LearnAndRepeatWeb.Business.CustomExceptions;
+using LearnAndRepeatWeb.Business.Resources;
+using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Contracts.Requests.User;
 using LearnAndRepeatWeb.Contracts.Responses.User;
 using LearnAndRepeatWeb.Infrastructure.AppDbContext;
@@ -14,10 +17,12 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
     public class UserService : IUserService
     {
         private readonly AppDbContext _appDbContext;
+        private readonly IMapper _mapper;
 
-        public UserService(AppDbContext appDbContext)
+        public UserService(AppDbContext appDbContext, IMapper mapper)
         {
             _appDbContext = appDbContext;
+            _mapper = mapper;
         }
 
         public PostTokenResponse PostToken(PostTokenRequest postTokenRequest)
@@ -30,9 +35,9 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             bool isUserExist = _appDbContext.User.Any(m => m.Email == postUserRequest.Email);
 
             if (isUserExist)
-            {
-                throw new Exception("Conflict Exception!"); //TODO: add custom exceptions 
-            } //TODO: add MessageResource.resx file for error messages
+            {   
+                throw new ConflictException(string.Format(Resource.ConflictExceptionMessage, postUserRequest.Email));
+            }
 
             #region Generate Hashed Password
             var saltByte = GenerateSaltByte();
@@ -54,9 +59,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             await _appDbContext.User.AddAsync(userModel);
             await _appDbContext.SaveChangesAsync();
 
-
-            //TODO: retunn mapping + response
-            return new PostUserResponse();
+            return _mapper.Map<PostUserResponse>(userModel);            
         }
 
         private byte[] GenerateSaltByte()

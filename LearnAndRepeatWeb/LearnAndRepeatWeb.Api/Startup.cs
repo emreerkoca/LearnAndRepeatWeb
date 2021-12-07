@@ -1,4 +1,5 @@
 using FluentValidation.AspNetCore;
+using LearnAndRepeatWeb.Business.Mappers.User;
 using LearnAndRepeatWeb.Business.Services.Implementations;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Business.Validators.User;
@@ -36,6 +37,8 @@ namespace LearnAndRepeatWeb.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LearnAndRepeatWeb.Api", Version = "v1" });
             });
+
+            services.AddAutoMapper(typeof(UserMappingProfile));
 
             services.AddDbContext<AppDbContext>(options =>
                    options.UseSqlServer(Configuration.GetConnectionString("LearnAndRepeatWebSqlServerConnectionString")));
