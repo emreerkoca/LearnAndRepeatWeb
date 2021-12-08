@@ -7,6 +7,6 @@ namespace LearnAndRepeatWeb.Business.Services.Interfaces
     public interface IUserService
     {
         Task<PostUserResponse> PostUser(PostUserRequest postUserRequest);
-         PostTokenResponse PostToken(PostTokenRequest postTokenRequest);
+        PostTokenResponse PostToken(PostTokenRequest postTokenRequest);
     }
 }

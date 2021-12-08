@@ -68,5 +68,14 @@ namespace LearnAndRepeatWeb.Business.Resources {
                 return ResourceManager.GetString("ConflictExceptionMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid username or password!.
+        /// </summary>
+        internal static string InvalidUsernameOrPassword {
+            get {
+                return ResourceManager.GetString("InvalidUsernameOrPassword", resourceCulture);
+            }
+        }
     }
 }

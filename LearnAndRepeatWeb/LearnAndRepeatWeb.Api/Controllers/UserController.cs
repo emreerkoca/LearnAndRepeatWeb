@@ -24,5 +24,13 @@ namespace LearnAndRepeatWeb.Api.Controllers
 
             return StatusCode((int)HttpStatusCode.OK, result);
         }
+
+        [HttpPost("token")]
+        public IActionResult PostToken([FromBody] PostTokenRequest postTokenRequest)
+        {
+            var result = _userService.PostToken(postTokenRequest);
+
+            return StatusCode((int)HttpStatusCode.OK, result);
+        }
     }
 }
