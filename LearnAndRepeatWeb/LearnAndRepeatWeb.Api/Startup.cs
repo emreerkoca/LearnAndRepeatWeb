@@ -1,11 +1,14 @@
 using FluentValidation.AspNetCore;
+using GreenPipes;
 using LearnAndRepeatWeb.Business.ConfigModels;
 using LearnAndRepeatWeb.Business.Constants;
+using LearnAndRepeatWeb.Business.Consumers.User;
 using LearnAndRepeatWeb.Business.Mappers.User;
 using LearnAndRepeatWeb.Business.Services.Implementations;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Business.Validators.User;
 using LearnAndRepeatWeb.Infrastructure.AppDbContext;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,6 +50,7 @@ namespace LearnAndRepeatWeb.Api
             services.AddAutoMapper(typeof(UserMappingProfile));
             services.ConfigureConfigSectionModels(Configuration);
             services.ConfigureJwtAuthentication(Configuration);
+            services.ConfigureMassTransit();
 
             services.AddDbContext<AppDbContext>(options =>
                    options.UseSqlServer(Configuration.GetConnectionString("LearnAndRepeatWebSqlServerConnectionString")));
@@ -106,6 +110,28 @@ namespace LearnAndRepeatWeb.Api
                     ValidateAudience = false
                 };
             });
+        }
+
+        public static void ConfigureMassTransit(this IServiceCollection services)
+        {
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<ConfirmationEmailSenderConsumer>();
+
+                x.SetKebabCaseEndpointNameFormatter();
+
+                x.UsingRabbitMq((context, cfg) => {
+                    cfg.UseMessageRetry(r => r.Immediate(5));
+
+
+                    cfg.ReceiveEndpoint("ConfirmationEmailSenderConsumerQueue", e =>
+                    {
+                        e.ConfigureConsumer<ConfirmationEmailSenderConsumer>(context);
+                    });
+                });
+            });
+
+            services.AddMassTransitHostedService();
         }
     }
 
