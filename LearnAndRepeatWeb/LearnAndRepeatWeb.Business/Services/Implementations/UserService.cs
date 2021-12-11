@@ -47,6 +47,11 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
                 throw new ValidationException(Resource.InvalidUsernameOrPassword);
             }
 
+            if (!userModel.IsEmailConfirmed)
+            {
+                throw new ValidationException(Resource.UserEmailIsNotConfirmed);
+            }
+
             var hashedPassword = GetSaltedAndHashedPassword(userModel.Salt, postTokenRequest.Password);
 
             if (!userModel.Password.Equals(hashedPassword))

@@ -123,4 +123,7 @@
   <data name="InvalidUsernameOrPassword" xml:space="preserve">
     <value>Invalid username or password!</value>
   </data>
+  <data name="UserEmailIsNotConfirmed" xml:space="preserve">
+    <value>User email is not confirmed. Check your inbox and activate your account!</value>
+  </data>
 </root>
