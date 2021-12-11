@@ -77,5 +77,14 @@ namespace LearnAndRepeatWeb.Business.Resources {
                 return ResourceManager.GetString("InvalidUsernameOrPassword", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User email is not confirmed. Check your inbox and activate your account!.
+        /// </summary>
+        internal static string UserEmailIsNotConfirmed {
+            get {
+                return ResourceManager.GetString("UserEmailIsNotConfirmed", resourceCulture);
+            }
+        }
     }
 }
