@@ -3,10 +3,12 @@ using LearnAndRepeatWeb.Business.ConfigModels;
 using LearnAndRepeatWeb.Business.CustomExceptions;
 using LearnAndRepeatWeb.Business.Resources;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
+using LearnAndRepeatWeb.Contracts.Events.User;
 using LearnAndRepeatWeb.Contracts.Requests.User;
 using LearnAndRepeatWeb.Contracts.Responses.User;
 using LearnAndRepeatWeb.Infrastructure.AppDbContext;
 using LearnAndRepeatWeb.Infrastructure.Entities.User;
+using MassTransit;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -25,12 +27,15 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
         private readonly AppDbContext _appDbContext;
         private readonly IMapper _mapper;
         private readonly UserConfigSectionModel _userConfigSectionModel;
+        private readonly IBusControl _busControl;
 
-        public UserService(AppDbContext appDbContext, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions)
+
+        public UserService(AppDbContext appDbContext, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions, IBusControl busControl)
         {
             _appDbContext = appDbContext;
             _mapper = mapper;
             _userConfigSectionModel = userConfigSectionModelOptions.Value;
+            _busControl = busControl;
         }
 
         public PostTokenResponse PostToken(PostTokenRequest postTokenRequest)
@@ -98,7 +103,14 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             await _appDbContext.User.AddAsync(userModel);
             await _appDbContext.SaveChangesAsync();
 
-            return _mapper.Map<PostUserResponse>(userModel);            
+            PostUserResponse postUserResponse = _mapper.Map<PostUserResponse>(userModel);
+
+            await _busControl.Publish(new UserCreatedEvent
+            {
+                PostUserResponse = postUserResponse
+            });
+
+            return postUserResponse;            
         }
 
         private byte[] GenerateSaltByte()
