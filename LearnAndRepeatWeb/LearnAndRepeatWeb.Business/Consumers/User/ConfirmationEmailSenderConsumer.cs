@@ -8,7 +8,7 @@ namespace LearnAndRepeatWeb.Business.Consumers.User
     {
         public async Task Consume(ConsumeContext<UserCreatedEvent> context)
         {
-            UserCreatedEvent userCreatedEvent = context.Message;
+            //TODO: Send confirmation email to user
         }
     }
 }
