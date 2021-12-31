@@ -9,6 +9,7 @@ namespace LearnAndRepeatWeb.Business.Mappers.User
         public UserMappingProfile()
         {
             CreateMap<UserModel, PostUserResponse>();
+            CreateMap<UserTokenModel, UserTokenResponse>();
         }
     }
 }

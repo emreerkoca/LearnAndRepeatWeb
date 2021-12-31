@@ -123,7 +123,16 @@
   <data name="InvalidUsernameOrPassword" xml:space="preserve">
     <value>Invalid username or password!</value>
   </data>
+  <data name="TokenIsAlreadyUsed" xml:space="preserve">
+    <value>Token is already used!</value>
+  </data>
+  <data name="UserCouldNotFound" xml:space="preserve">
+    <value>User could not found!</value>
+  </data>
   <data name="UserEmailIsNotConfirmed" xml:space="preserve">
     <value>User email is not confirmed. Check your inbox and activate your account!</value>
+  </data>
+  <data name="UserTokenCouldNotFound" xml:space="preserve">
+    <value>User token could not found!</value>
   </data>
 </root>

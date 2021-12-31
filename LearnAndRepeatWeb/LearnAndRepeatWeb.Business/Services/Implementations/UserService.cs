@@ -38,6 +38,73 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             _busControl = busControl;
         }
 
+        public async Task<PostUserResponse> PostUser(PostUserRequest postUserRequest)
+        {
+            bool isUserExist = _appDbContext.User.Any(m => m.Email == postUserRequest.Email);
+
+            if (isUserExist)
+            {
+                throw new ConflictException(string.Format(Resource.ConflictExceptionMessage, postUserRequest.Email));
+            }
+
+            #region Generate Hashed Password
+            var saltByte = GenerateSaltByte();
+            string hashedPassword = GenerateHashedPassword(saltByte, postUserRequest.Password);
+            string salt = Convert.ToBase64String(saltByte);
+            #endregion
+
+            var userModel = new UserModel
+            {
+                Email = postUserRequest.Email,
+                FirstName = postUserRequest.FirstName,
+                LastName = postUserRequest.LastName,
+                Password = hashedPassword,
+                Salt = salt,
+                CreateDate = DateTime.UtcNow,
+                UpdateDate = DateTime.UtcNow
+            };
+
+            await _appDbContext.User.AddAsync(userModel);
+            await _appDbContext.SaveChangesAsync();
+
+            PostUserResponse postUserResponse = _mapper.Map<PostUserResponse>(userModel);
+
+            await _busControl.Publish(new UserCreatedEvent
+            {
+                PostUserResponse = postUserResponse
+            });
+
+            return postUserResponse;
+        }
+
+        public async Task PutUserAsConfirmed(long userId, string tokenValue)
+        {
+            var userModel = GetUserModel(userId);
+            var tokenModel = _appDbContext.UserToken.FirstOrDefault(m => m.UserId == userId && m.TokenValue == tokenValue);
+
+            if (tokenModel == null)
+            {
+                throw new NotFoundException(Resource.UserTokenCouldNotFound);
+            }
+
+            if (tokenModel.IsUsed)
+            {
+                throw new ValidationException(Resource.TokenIsAlreadyUsed);
+            }
+
+            userModel.IsEmailConfirmed = true;
+            userModel.UpdateDate = DateTime.UtcNow;
+
+            tokenModel.IsUsed = true;
+            tokenModel.UpdateDate = DateTime.UtcNow;
+
+            await _appDbContext.SaveChangesAsync();
+            await _busControl.Publish(new UserConfirmedEvent
+            {
+                UserId = userId
+            });
+        }
+
         public PostTokenResponse PostToken(PostTokenRequest postTokenRequest)
         {
             var userModel = _appDbContext.User.FirstOrDefault(m => m.Email.Equals(postTokenRequest.Email));
@@ -79,43 +146,30 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             };
         }
 
-        public async Task<PostUserResponse> PostUser(PostUserRequest postUserRequest)
+        public async Task<UserTokenResponse> PostUserToken(long userId, UserTokenType userTokenType)
         {
-            bool isUserExist = _appDbContext.User.Any(m => m.Email == postUserRequest.Email);
+            GetUserModel(userId);
 
-            if (isUserExist)
-            {   
-                throw new ConflictException(string.Format(Resource.ConflictExceptionMessage, postUserRequest.Email));
-            }
-
-            #region Generate Hashed Password
-            var saltByte = GenerateSaltByte();
-            string hashedPassword = GenerateHashedPassword(saltByte, postUserRequest.Password);
-            string salt = Convert.ToBase64String(saltByte);
-            #endregion
-
-            var userModel = new UserModel
+            UserTokenModel userTokenModel = new UserTokenModel
             {
-                Email = postUserRequest.Email,
-                FirstName = postUserRequest.FirstName,
-                LastName = postUserRequest.LastName,
-                Password = hashedPassword,
-                Salt = salt,
+                UserId = userId,
+                UserTokenType = userTokenType,
+                TokenValue = Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 CreateDate = DateTime.UtcNow,
-                UpdateDate = DateTime.UtcNow
+                ExpireDate = DateTime.UtcNow.AddDays(2)
             };
 
-            await _appDbContext.User.AddAsync(userModel);
+            await _appDbContext.UserToken.AddAsync(userTokenModel);
             await _appDbContext.SaveChangesAsync();
 
-            PostUserResponse postUserResponse = _mapper.Map<PostUserResponse>(userModel);
+            UserTokenResponse userTokenResponse = _mapper.Map<UserTokenResponse>(userTokenModel);
 
-            await _busControl.Publish(new UserCreatedEvent
+            await _busControl.Publish(new UserTokenCreatedEvent
             {
-                PostUserResponse = postUserResponse
+                UserTokenResponse = userTokenResponse
             });
 
-            return postUserResponse;            
+            return userTokenResponse;
         }
 
         private byte[] GenerateSaltByte()
@@ -143,6 +197,18 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
         private string GetSaltedAndHashedPassword(string salt, string password)
         {
             return GenerateHashedPassword(Convert.FromBase64String(salt), password);
+        }
+
+        private UserModel GetUserModel(long userId)
+        {
+            var userModel = _appDbContext.User.FirstOrDefault(m => m.Id == userId);
+
+            if (userModel == null)
+            {
+                throw new NotFoundException(Resource.UserCouldNotFound);
+            }
+
+            return userModel;
         }
     }
 }

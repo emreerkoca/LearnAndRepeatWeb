@@ -79,11 +79,38 @@ namespace LearnAndRepeatWeb.Business.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Token is already used!.
+        /// </summary>
+        internal static string TokenIsAlreadyUsed {
+            get {
+                return ResourceManager.GetString("TokenIsAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User could not found!.
+        /// </summary>
+        internal static string UserCouldNotFound {
+            get {
+                return ResourceManager.GetString("UserCouldNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User email is not confirmed. Check your inbox and activate your account!.
         /// </summary>
         internal static string UserEmailIsNotConfirmed {
             get {
                 return ResourceManager.GetString("UserEmailIsNotConfirmed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User token could not found!.
+        /// </summary>
+        internal static string UserTokenCouldNotFound {
+            get {
+                return ResourceManager.GetString("UserTokenCouldNotFound", resourceCulture);
             }
         }
     }

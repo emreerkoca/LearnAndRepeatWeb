@@ -32,5 +32,13 @@ namespace LearnAndRepeatWeb.Api.Controllers
 
             return StatusCode((int)HttpStatusCode.OK, result);
         }
+
+        [HttpPut("{id}/verify/{confirmationToken}")] 
+        public async Task<IActionResult> PutUserAsVerified([FromRoute] long id, [FromRoute] string confirmationToken)
+        {
+            await _userService.PutUserAsConfirmed(id, confirmationToken);
+
+            return StatusCode((int)HttpStatusCode.OK);
+        }
     }
 }
