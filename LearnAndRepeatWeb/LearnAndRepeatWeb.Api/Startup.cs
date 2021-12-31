@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 
 namespace LearnAndRepeatWeb.Api
@@ -116,17 +117,23 @@ namespace LearnAndRepeatWeb.Api
         {
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<ConfirmationEmailSenderConsumer>();
+                x.AddConsumer<UserConfirmationTokenCreatorConsumer>();
+                x.AddConsumer<UserTransactionalEmailSenderConsumer>();
 
                 x.SetKebabCaseEndpointNameFormatter();
 
                 x.UsingRabbitMq((context, cfg) => {
-                    cfg.UseMessageRetry(r => r.Immediate(5));
+                    cfg.UseMessageRetry(r => r.Incremental(3, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5)));
 
 
                     cfg.ReceiveEndpoint("ConfirmationEmailSenderConsumerQueue", e =>
                     {
-                        e.ConfigureConsumer<ConfirmationEmailSenderConsumer>(context);
+                        e.ConfigureConsumer<UserConfirmationTokenCreatorConsumer>(context);
+                    });
+
+                    cfg.ReceiveEndpoint("UserTransactionalEmailSenderConsumerQueue", e =>
+                    {
+                        e.ConfigureConsumer<UserTransactionalEmailSenderConsumer>(context);
                     });
                 });
             });
