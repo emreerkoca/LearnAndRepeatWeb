@@ -13,10 +13,11 @@ namespace LearnAndRepeatWeb.Infrastructure.AppDbContext
         {
             modelBuilder.Entity<UserModel>().HasQueryFilter(m => !m.IsDeleted);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserModel).Assembly);
-           
+
             base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<UserModel> User { get; set; }
+        public DbSet<UserTokenModel> UserToken { get; set; }
     }
 }
