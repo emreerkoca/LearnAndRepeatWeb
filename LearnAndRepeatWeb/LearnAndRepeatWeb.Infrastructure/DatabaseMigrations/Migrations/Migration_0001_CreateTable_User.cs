@@ -19,7 +19,9 @@ namespace LearnAndRepeatWeb.Infrastructure.DatabaseMigrations.Migrations
                 .WithColumn("Email").AsString().NotNullable().Unique()
                 .WithColumn("Password").AsString().NotNullable()
                 .WithColumn("Salt").AsString().NotNullable()
+                .WithColumn("IsEmailConfirmed").AsBoolean().NotNullable().WithDefaultValue(0)
                 .WithColumn("IsDeleted").AsBoolean().NotNullable().WithDefaultValue(0)
+                .WithColumn("DeleteDate").AsDateTime2().Nullable()
                 .WithColumn("CreateDate").AsDateTime2().NotNullable()
                 .WithColumn("UpdateDate").AsDateTime2().NotNullable();
         }
