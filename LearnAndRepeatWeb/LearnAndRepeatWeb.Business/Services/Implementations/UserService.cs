@@ -96,7 +96,6 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             userModel.UpdateDate = DateTime.UtcNow;
 
             tokenModel.IsUsed = true;
-            tokenModel.UpdateDate = DateTime.UtcNow;
 
             await _appDbContext.SaveChangesAsync();
             await _busControl.Publish(new UserConfirmedEvent
