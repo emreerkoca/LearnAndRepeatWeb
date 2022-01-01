@@ -4,6 +4,6 @@ namespace LearnAndRepeatWeb.Contracts.Events.User
 {
     public class UserCreatedEvent
     {
-        public PostUserResponse PostUserResponse { get; set; }
+        public UserResponse UserResponse { get; set; }
     }
 }

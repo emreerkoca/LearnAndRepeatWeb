@@ -7,9 +7,9 @@ namespace LearnAndRepeatWeb.Business.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<PostUserResponse> PostUser(PostUserRequest postUserRequest);
+        Task<UserResponse> PostUser(PostUserRequest postUserRequest);
         Task PutUserAsConfirmed(long userId, string tokenValue);
-        PostTokenResponse PostToken(PostTokenRequest postTokenRequest);
+        AuthenticationTokenResponse PostAuthenticationToken(PostAuthenticationTokenRequest postAuthenticationTokenRequest);
         Task<UserTokenResponse> PostUserToken(long userId, UserTokenType userTokenType);
 
     }

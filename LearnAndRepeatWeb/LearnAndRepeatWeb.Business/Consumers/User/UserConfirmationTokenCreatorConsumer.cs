@@ -16,9 +16,9 @@ namespace LearnAndRepeatWeb.Business.Consumers.User
 
         public async Task Consume(ConsumeContext<UserCreatedEvent> context)
         {
-            var postUserResponse = context.Message.PostUserResponse;
+            var userResponse = context.Message.UserResponse;
 
-            await _userService.PostUserToken(postUserResponse.Id, UserTokenType.UserConfirmationToken);
+            await _userService.PostUserToken(userResponse.Id, UserTokenType.UserConfirmationToken);
         }
     }
 }
