@@ -2,7 +2,7 @@
 
 namespace LearnAndRepeatWeb.Contracts.Responses.User
 {
-    public class PostUserResponse
+    public class UserResponse
     {
         public long Id { get; set; }
         public string FirstName { get; set; }

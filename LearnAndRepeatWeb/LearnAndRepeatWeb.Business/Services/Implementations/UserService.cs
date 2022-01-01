@@ -38,7 +38,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             _busControl = busControl;
         }
 
-        public async Task<PostUserResponse> PostUser(PostUserRequest postUserRequest)
+        public async Task<UserResponse> PostUser(PostUserRequest postUserRequest)
         {
             bool isUserExist = _appDbContext.User.Any(m => m.Email == postUserRequest.Email);
 
@@ -67,14 +67,14 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             await _appDbContext.User.AddAsync(userModel);
             await _appDbContext.SaveChangesAsync();
 
-            PostUserResponse postUserResponse = _mapper.Map<PostUserResponse>(userModel);
+            UserResponse userResponse = _mapper.Map<UserResponse>(userModel);
 
             await _busControl.Publish(new UserCreatedEvent
             {
-                PostUserResponse = postUserResponse
+                UserResponse = userResponse
             });
 
-            return postUserResponse;
+            return userResponse;
         }
 
         public async Task PutUserAsConfirmed(long userId, string tokenValue)
@@ -105,9 +105,9 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             });
         }
 
-        public PostTokenResponse PostToken(PostTokenRequest postTokenRequest)
+        public AuthenticationTokenResponse PostAuthenticationToken(PostAuthenticationTokenRequest postAuthenticationTokenRequest)
         {
-            var userModel = _appDbContext.User.FirstOrDefault(m => m.Email.Equals(postTokenRequest.Email));
+            var userModel = _appDbContext.User.FirstOrDefault(m => m.Email.Equals(postAuthenticationTokenRequest.Email));
 
             if (userModel == null)
             {
@@ -119,7 +119,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
                 throw new ValidationException(Resource.UserEmailIsNotConfirmed);
             }
 
-            var hashedPassword = GetSaltedAndHashedPassword(userModel.Salt, postTokenRequest.Password);
+            var hashedPassword = GetSaltedAndHashedPassword(userModel.Salt, postAuthenticationTokenRequest.Password);
 
             if (!userModel.Password.Equals(hashedPassword))
             {
@@ -139,7 +139,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
             SecurityToken securityToken = tokenHandler.CreateToken(tokenDescriptor);
 
-            return new PostTokenResponse
+            return new AuthenticationTokenResponse
             {
                 AccountId = userModel.Id,
                 Token = tokenHandler.WriteToken(securityToken)
