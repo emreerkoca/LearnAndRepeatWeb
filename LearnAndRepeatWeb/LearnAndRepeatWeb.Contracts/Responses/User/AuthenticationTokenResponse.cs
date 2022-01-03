@@ -2,7 +2,7 @@
 {
     public class AuthenticationTokenResponse
     {
-        public long AccountId { get; set; }
+        public string UserKey { get; set; }
         public string Token { get; set; }
     }
 }

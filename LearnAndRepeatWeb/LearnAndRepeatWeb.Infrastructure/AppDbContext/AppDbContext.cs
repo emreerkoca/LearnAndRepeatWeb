@@ -1,4 +1,5 @@
-﻿using LearnAndRepeatWeb.Infrastructure.Entities.User;
+﻿using LearnAndRepeatWeb.Infrastructure.Entities.Card;
+using LearnAndRepeatWeb.Infrastructure.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearnAndRepeatWeb.Infrastructure.AppDbContext
@@ -12,6 +13,8 @@ namespace LearnAndRepeatWeb.Infrastructure.AppDbContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserModel>().HasQueryFilter(m => !m.IsDeleted);
+            modelBuilder.Entity<CardModel>().HasQueryFilter(m => !m.IsDeleted);
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserModel).Assembly);
 
             base.OnModelCreating(modelBuilder);
@@ -19,5 +22,6 @@ namespace LearnAndRepeatWeb.Infrastructure.AppDbContext
 
         public DbSet<UserModel> User { get; set; }
         public DbSet<UserTokenModel> UserToken { get; set; }
+        public DbSet<CardModel> Card { get; set; }
     }
 }

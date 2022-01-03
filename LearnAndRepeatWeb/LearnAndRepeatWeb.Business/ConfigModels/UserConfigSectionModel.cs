@@ -2,6 +2,6 @@
 {
     public class UserConfigSectionModel
     {
-        public string Secret { get; set; }
+        public string AuthenticationSecret { get; set; }
     }
 }

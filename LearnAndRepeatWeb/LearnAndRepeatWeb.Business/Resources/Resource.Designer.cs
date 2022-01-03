@@ -106,6 +106,15 @@ namespace LearnAndRepeatWeb.Business.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The user has no permission!.
+        /// </summary>
+        internal static string UserHasNoPermission {
+            get {
+                return ResourceManager.GetString("UserHasNoPermission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User token could not found!.
         /// </summary>
         internal static string UserTokenCouldNotFound {
