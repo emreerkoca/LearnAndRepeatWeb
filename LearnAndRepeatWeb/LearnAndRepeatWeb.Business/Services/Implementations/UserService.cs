@@ -28,14 +28,15 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
         private readonly IMapper _mapper;
         private readonly UserConfigSectionModel _userConfigSectionModel;
         private readonly IBusControl _busControl;
+        private readonly IUserAuthorizationService _userAuthorizationService;
 
-
-        public UserService(AppDbContext appDbContext, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions, IBusControl busControl)
+        public UserService(AppDbContext appDbContext, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions, IBusControl busControl, IUserAuthorizationService userAuthorizationService)
         {
             _appDbContext = appDbContext;
             _mapper = mapper;
             _userConfigSectionModel = userConfigSectionModelOptions.Value;
             _busControl = busControl;
+            _userAuthorizationService = userAuthorizationService;
         }
 
         public async Task<UserResponse> PostUser(PostUserRequest postUserRequest)
@@ -125,22 +126,26 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
                 throw new ValidationException(Resource.InvalidUsernameOrPassword);
             }
 
+            UserResponse userResponse = _mapper.Map<UserResponse>(userModel);
+            var userKey = _userAuthorizationService.ConvertUserResponseToUserKey(userResponse);
+
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            byte[] key = Encoding.ASCII.GetBytes(_userConfigSectionModel.Secret);
+            byte[] key = Encoding.ASCII.GetBytes(_userConfigSectionModel.AuthenticationSecret);
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[] {
-                    new Claim(ClaimTypes.Name, userModel.Id.ToString())
+                    new Claim(ClaimTypes.Name, userKey)
                 }),
-                Expires = DateTime.UtcNow.AddDays(2 ),
+                Expires = DateTime.UtcNow.AddDays(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             SecurityToken securityToken = tokenHandler.CreateToken(tokenDescriptor);
 
+
             return new AuthenticationTokenResponse
             {
-                AccountId = userModel.Id,
+                UserKey = userKey,
                 Token = tokenHandler.WriteToken(securityToken)
             };
         }

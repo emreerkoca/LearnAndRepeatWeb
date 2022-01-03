@@ -132,6 +132,9 @@
   <data name="UserEmailIsNotConfirmed" xml:space="preserve">
     <value>User email is not confirmed. Check your inbox and activate your account!</value>
   </data>
+  <data name="UserHasNoPermission" xml:space="preserve">
+    <value>The user has no permission!</value>
+  </data>
   <data name="UserTokenCouldNotFound" xml:space="preserve">
     <value>User token could not found!</value>
   </data>
