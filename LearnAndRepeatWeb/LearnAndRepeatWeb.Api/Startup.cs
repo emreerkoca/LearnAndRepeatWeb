@@ -19,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace LearnAndRepeatWeb.Api
@@ -46,6 +47,33 @@ namespace LearnAndRepeatWeb.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LearnAndRepeatWeb.Api", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    In = ParameterLocation.Header
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             services.AddAutoMapper(typeof(UserMappingProfile));
@@ -57,6 +85,8 @@ namespace LearnAndRepeatWeb.Api
                    options.UseSqlServer(Configuration.GetConnectionString("LearnAndRepeatWebSqlServerConnectionString")));
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICardService, CardService>();
+            services.AddScoped<IUserAuthorizationService, UserAuthorizationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,6 +103,7 @@ namespace LearnAndRepeatWeb.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -94,7 +125,7 @@ namespace LearnAndRepeatWeb.Api
         {
             var userConfigSection = configuration.GetSection(ConfigSectionNames.UserConfigSectionName);
             UserConfigSectionModel userConfigSectionModel = userConfigSection.Get<UserConfigSectionModel>();
-            var key = Encoding.ASCII.GetBytes(userConfigSectionModel.Secret);
+            var key = Encoding.ASCII.GetBytes(userConfigSectionModel.AuthenticationSecret);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
