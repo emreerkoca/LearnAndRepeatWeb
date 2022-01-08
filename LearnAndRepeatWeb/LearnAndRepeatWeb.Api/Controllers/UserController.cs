@@ -26,9 +26,9 @@ namespace LearnAndRepeatWeb.Api.Controllers
         }
 
         [HttpPost("authentication-token")]
-        public IActionResult PostToken([FromBody] PostAuthenticationTokenRequest postAuthenticationTokenRequest)
+        public async Task<IActionResult> PostToken([FromBody] PostAuthenticationTokenRequest postAuthenticationTokenRequest)
         {
-            var result = _userService.PostAuthenticationToken(postAuthenticationTokenRequest);
+            var result = await _userService.PostAuthenticationToken(postAuthenticationTokenRequest);
 
             return StatusCode((int)HttpStatusCode.OK, result);
         }

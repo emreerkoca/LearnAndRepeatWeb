@@ -9,7 +9,7 @@ namespace LearnAndRepeatWeb.Business.Services.Interfaces
     {
         Task<UserResponse> PostUser(PostUserRequest postUserRequest);
         Task PutUserAsConfirmed(long userId, string tokenValue);
-        AuthenticationTokenResponse PostAuthenticationToken(PostAuthenticationTokenRequest postAuthenticationTokenRequest);
+        Task<AuthenticationTokenResponse> PostAuthenticationToken(PostAuthenticationTokenRequest postAuthenticationTokenRequest);
         Task<UserTokenResponse> PostUserToken(long userId, UserTokenType userTokenType);
 
     }

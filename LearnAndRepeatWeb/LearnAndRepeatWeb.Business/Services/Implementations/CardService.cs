@@ -3,8 +3,8 @@ using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Contracts.Events.Card;
 using LearnAndRepeatWeb.Contracts.Requests.Card;
 using LearnAndRepeatWeb.Contracts.Responses.Card;
-using LearnAndRepeatWeb.Infrastructure.AppDbContext;
 using LearnAndRepeatWeb.Infrastructure.Entities.Card;
+using LearnAndRepeatWeb.Infrastructure.Repositories.Card;
 using MassTransit;
 using System;
 using System.Threading.Tasks;
@@ -13,14 +13,14 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 {
     public class CardService : ICardService
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly ICardRepository _cardRepository;
         private readonly IMapper _mapper;
         private readonly IBusControl _busControl;
         private readonly IUserAuthorizationService _userAuthorizationService;
 
-        public CardService(AppDbContext appDbContext, IMapper mapper, IBusControl busControl, IUserAuthorizationService userAuthorizationService)
+        public CardService(ICardRepository cardRepository, IMapper mapper, IBusControl busControl, IUserAuthorizationService userAuthorizationService)
         {
-            _appDbContext = appDbContext;
+            _cardRepository = cardRepository;
             _mapper = mapper;
             _busControl = busControl;
             _userAuthorizationService = userAuthorizationService;
@@ -41,8 +41,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
                 UpdateDate = DateTime.UtcNow
             };
 
-            await _appDbContext.Card.AddAsync(cardModel);
-            await _appDbContext.SaveChangesAsync();
+            await _cardRepository.Add(cardModel);
 
             CardResponse cardResponse = _mapper.Map<CardResponse>(cardModel);
 
