@@ -6,8 +6,8 @@ using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Contracts.Events.User;
 using LearnAndRepeatWeb.Contracts.Requests.User;
 using LearnAndRepeatWeb.Contracts.Responses.User;
-using LearnAndRepeatWeb.Infrastructure.AppDbContext;
 using LearnAndRepeatWeb.Infrastructure.Entities.User;
+using LearnAndRepeatWeb.Infrastructure.Repositories.User;
 using MassTransit;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Options;
@@ -24,15 +24,17 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 {
     public class UserService : IUserService
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserTokenRepository _userTokenRepository;
         private readonly IMapper _mapper;
         private readonly UserConfigSectionModel _userConfigSectionModel;
         private readonly IBusControl _busControl;
         private readonly IUserAuthorizationService _userAuthorizationService;
 
-        public UserService(AppDbContext appDbContext, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions, IBusControl busControl, IUserAuthorizationService userAuthorizationService)
+        public UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions, IBusControl busControl, IUserAuthorizationService userAuthorizationService)
         {
-            _appDbContext = appDbContext;
+            _userRepository = userRepository;
+            _userTokenRepository = userTokenRepository;
             _mapper = mapper;
             _userConfigSectionModel = userConfigSectionModelOptions.Value;
             _busControl = busControl;
@@ -41,7 +43,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
         public async Task<UserResponse> PostUser(PostUserRequest postUserRequest)
         {
-            bool isUserExist = _appDbContext.User.Any(m => m.Email == postUserRequest.Email);
+            bool isUserExist = await _userRepository.Any(m => m.Email == postUserRequest.Email);
 
             if (isUserExist)
             {
@@ -65,8 +67,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
                 UpdateDate = DateTime.UtcNow
             };
 
-            await _appDbContext.User.AddAsync(userModel);
-            await _appDbContext.SaveChangesAsync();
+            await _userRepository.Add(userModel);
 
             UserResponse userResponse = _mapper.Map<UserResponse>(userModel);
 
@@ -80,8 +81,8 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
         public async Task PutUserAsConfirmed(long userId, string tokenValue)
         {
-            var userModel = GetUserModel(userId);
-            var tokenModel = _appDbContext.UserToken.FirstOrDefault(m => m.UserId == userId && m.TokenValue == tokenValue);
+            var userModel = await GetUserModel(userId);            
+            var tokenModel = await _userTokenRepository.GetItem(m => m.UserId == userId && m.TokenValue == tokenValue);
 
             if (tokenModel == null)
             {
@@ -96,18 +97,21 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             userModel.IsEmailConfirmed = true;
             userModel.UpdateDate = DateTime.UtcNow;
 
+            await _userRepository.Update(userModel);
+
             tokenModel.IsUsed = true;
 
-            await _appDbContext.SaveChangesAsync();
+            await _userTokenRepository.Update(tokenModel);
+            
             await _busControl.Publish(new UserConfirmedEvent
             {
                 UserId = userId
             });
         }
 
-        public AuthenticationTokenResponse PostAuthenticationToken(PostAuthenticationTokenRequest postAuthenticationTokenRequest)
+        public async Task<AuthenticationTokenResponse> PostAuthenticationToken(PostAuthenticationTokenRequest postAuthenticationTokenRequest)
         {
-            var userModel = _appDbContext.User.FirstOrDefault(m => m.Email.Equals(postAuthenticationTokenRequest.Email));
+            var userModel = await _userRepository.GetItem(m => m.Email.Equals(postAuthenticationTokenRequest.Email));
 
             if (userModel == null)
             {
@@ -152,7 +156,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
         public async Task<UserTokenResponse> PostUserToken(long userId, UserTokenType userTokenType)
         {
-            GetUserModel(userId);
+            await GetUserModel(userId);
 
             UserTokenModel userTokenModel = new UserTokenModel
             {
@@ -163,8 +167,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
                 ExpireDate = DateTime.UtcNow.AddDays(2)
             };
 
-            await _appDbContext.UserToken.AddAsync(userTokenModel);
-            await _appDbContext.SaveChangesAsync();
+            await _userTokenRepository.Add(userTokenModel);
 
             UserTokenResponse userTokenResponse = _mapper.Map<UserTokenResponse>(userTokenModel);
 
@@ -203,9 +206,9 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             return GenerateHashedPassword(Convert.FromBase64String(salt), password);
         }
 
-        private UserModel GetUserModel(long userId)
+        private async Task<UserModel> GetUserModel(long userId)
         {
-            var userModel = _appDbContext.User.FirstOrDefault(m => m.Id == userId);
+            var userModel = await _userRepository.GetById(userId);
 
             if (userModel == null)
             {
