@@ -7,7 +7,9 @@ using LearnAndRepeatWeb.Business.Mappers.User;
 using LearnAndRepeatWeb.Business.Services.Implementations;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Business.Validators.User;
-using LearnAndRepeatWeb.Infrastructure.AppDbContext;
+using LearnAndRepeatWeb.Infrastructure.AppDbContextSection;
+using LearnAndRepeatWeb.Infrastructure.Repositories.Card;
+using LearnAndRepeatWeb.Infrastructure.Repositories.User;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -87,6 +89,10 @@ namespace LearnAndRepeatWeb.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICardService, CardService>();
             services.AddScoped<IUserAuthorizationService, UserAuthorizationService>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+            services.AddScoped<ICardRepository, CardRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

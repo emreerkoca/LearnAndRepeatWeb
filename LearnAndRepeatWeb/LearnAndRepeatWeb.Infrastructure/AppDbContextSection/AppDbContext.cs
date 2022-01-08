@@ -2,7 +2,7 @@
 using LearnAndRepeatWeb.Infrastructure.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
-namespace LearnAndRepeatWeb.Infrastructure.AppDbContext
+namespace LearnAndRepeatWeb.Infrastructure.AppDbContextSection
 {
     public class AppDbContext : DbContext
     {
