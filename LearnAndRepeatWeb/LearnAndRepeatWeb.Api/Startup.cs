@@ -28,17 +28,18 @@ namespace LearnAndRepeatWeb.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             Configuration = configuration;
+            HostEnvironment = hostEnvironment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostEnvironment HostEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers()
                 .AddFluentValidation(s =>
                 {
@@ -83,8 +84,16 @@ namespace LearnAndRepeatWeb.Api
             services.ConfigureJwtAuthentication(Configuration);
             services.ConfigureMassTransit();
 
-            services.AddDbContext<AppDbContext>(options =>
+            if (HostEnvironment.IsEnvironment("Test"))
+            {
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseInMemoryDatabase("InMemoryTestDatabase"));
+            }
+            else
+            {
+                services.AddDbContext<AppDbContext>(options =>
                    options.UseSqlServer(Configuration.GetConnectionString("LearnAndRepeatWebSqlServerConnectionString")));
+            }
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICardService, CardService>();
