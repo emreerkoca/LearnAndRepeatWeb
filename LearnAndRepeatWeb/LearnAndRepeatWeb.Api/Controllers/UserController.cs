@@ -1,5 +1,6 @@
 ﻿using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Contracts.Requests.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
@@ -39,6 +40,24 @@ namespace LearnAndRepeatWeb.Api.Controllers
             await _userService.PutUserAsConfirmed(id, confirmationToken);
 
             return StatusCode((int)HttpStatusCode.OK);
+        }
+
+        [Authorize]
+        [HttpPatch("{userKey}/update")]
+        public async Task<IActionResult> Patch([FromRoute] string userKey, [FromBody] PatchUserRequest patchUserRequest)
+        {
+            await _userService.PatchUser(userKey, patchUserRequest);
+
+            return StatusCode((int)HttpStatusCode.OK);
+        }
+
+        [Authorize]
+        [HttpGet("{userKey}")]
+        public async Task<IActionResult> Get([FromRoute] string userKey)
+        {
+            var result = await _userService.GetUser(userKey);
+
+            return StatusCode((int)HttpStatusCode.OK, result);
         }
     }
 }

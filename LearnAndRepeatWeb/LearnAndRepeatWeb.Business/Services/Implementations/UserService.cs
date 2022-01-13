@@ -79,6 +79,48 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             return userResponse;
         }
 
+        public async Task PatchUser(string userKey, PatchUserRequest patchUserRequest)
+        {
+            _userAuthorizationService.CheckUserPermission(userKey);
+            long userId = _userAuthorizationService.ConvertUserKeyToUserResponse(userKey).Id;
+
+            var userModel = await _userRepository.GetById(userId);
+
+            if (userModel == null)
+            {
+                throw new NotFoundException(Resource.UserCouldNotFound);
+            }
+
+            if (!string.IsNullOrEmpty(patchUserRequest.FirstName))
+            {
+                userModel.FirstName = patchUserRequest.FirstName;
+            }
+
+            if (!string.IsNullOrEmpty(patchUserRequest.LastName))
+            {
+                userModel.LastName = patchUserRequest.LastName;
+            }
+
+            userModel.UpdateDate = DateTime.UtcNow;
+
+            await _userRepository.Update(userModel);
+        }
+
+        public async Task<UserResponse> GetUser(string userKey)
+        {
+            _userAuthorizationService.CheckUserPermission(userKey);
+            long userId = _userAuthorizationService.ConvertUserKeyToUserResponse(userKey).Id;
+
+            var userModel = await _userRepository.GetById(userId);
+
+            if (userModel == null)
+            {
+                throw new NotFoundException(Resource.UserCouldNotFound);
+            }
+
+            return _mapper.Map<UserResponse>(userModel);
+        }
+
         public async Task PutUserAsConfirmed(long userId, string tokenValue)
         {
             var userModel = await GetUserModel(userId);            
@@ -217,5 +259,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
             return userModel;
         }
+
+        
     }
 }
