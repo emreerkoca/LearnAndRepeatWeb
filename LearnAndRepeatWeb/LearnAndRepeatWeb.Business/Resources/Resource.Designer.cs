@@ -61,6 +61,15 @@ namespace LearnAndRepeatWeb.Business.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The card couldn&apos;t found!.
+        /// </summary>
+        internal static string CardCouldNotFound {
+            get {
+                return ResourceManager.GetString("CardCouldNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} already exist!.
         /// </summary>
         internal static string ConflictExceptionMessage {
