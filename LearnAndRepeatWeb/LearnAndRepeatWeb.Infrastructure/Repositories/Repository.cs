@@ -51,5 +51,10 @@ namespace LearnAndRepeatWeb.Infrastructure.Repositories
         {
             return await _dbContext.Set<T>().Where(expression).AnyAsync();
         }
+
+        public IQueryable<T> GetItemsIQueryable()
+        {
+            return _dbContext.Set<T>().AsQueryable();
+        }
     }
 }
