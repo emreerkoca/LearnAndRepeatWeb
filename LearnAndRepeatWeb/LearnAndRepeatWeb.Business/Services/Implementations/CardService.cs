@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using LearnAndRepeatWeb.Business.CustomExceptions;
+using LearnAndRepeatWeb.Business.Resources;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Contracts.Events.Card;
 using LearnAndRepeatWeb.Contracts.Requests.Card;
@@ -6,7 +8,10 @@ using LearnAndRepeatWeb.Contracts.Responses.Card;
 using LearnAndRepeatWeb.Infrastructure.Entities.Card;
 using LearnAndRepeatWeb.Infrastructure.Repositories.Card;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace LearnAndRepeatWeb.Business.Services.Implementations
@@ -51,6 +56,94 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
             });
 
             return cardResponse;
+        }
+
+        public async Task PatchCard(string userKey, PatchCardRequest patchCardRequest)
+        {
+            _userAuthorizationService.CheckUserPermission(userKey);
+            long userId = _userAuthorizationService.ConvertUserKeyToUserResponse(userKey).Id;
+
+            var cardModel = await _cardRepository.GetItem(m => m.UserId == userId && m.Id == patchCardRequest.Id);
+
+            if (cardModel == null)
+            {
+                throw new NotFoundException(Resource.CardCouldNotFound);
+            }
+
+            if (!string.IsNullOrEmpty(patchCardRequest.Header))
+            {
+                cardModel.Header = patchCardRequest.Header;
+                cardModel.UpdateDate = DateTime.UtcNow;
+            }
+
+            if (!string.IsNullOrEmpty(patchCardRequest.Content))
+            {
+                cardModel.Content = patchCardRequest.Content;
+                cardModel.UpdateDate = DateTime.UtcNow;
+            }
+
+            await _cardRepository.Update(cardModel);
+        }
+
+        public async Task<CardListResponse> GetCard(string userKey, GetCardRequest getCardRequest)
+        {
+            _userAuthorizationService.CheckUserPermission(userKey);
+            long userId = _userAuthorizationService.ConvertUserKeyToUserResponse(userKey).Id;
+
+            IQueryable<CardModel> cardsIQueryable = _cardRepository.GetItemsIQueryable();
+
+            cardsIQueryable = cardsIQueryable.Where(m => m.UserId == userId);
+
+            if (getCardRequest.Id.HasValue)
+            {
+                cardsIQueryable = cardsIQueryable.Where(m => m.Id == getCardRequest.Id);
+            }
+
+            if (!string.IsNullOrEmpty(getCardRequest.Header))
+            {
+                cardsIQueryable = cardsIQueryable.Where(m => m.Header.Equals(getCardRequest.Header));
+            }
+
+            if (!string.IsNullOrEmpty(getCardRequest.Tag))
+            {
+                cardsIQueryable = cardsIQueryable.Where(m => m.Tag.Contains(getCardRequest.Tag));
+            }
+
+            int totalItemCount = cardsIQueryable.Count();
+
+            List<CardModel> cardModelList = await cardsIQueryable
+                .Skip((getCardRequest.PageNumber - 1) * getCardRequest.PageSize)
+                .Take(getCardRequest.PageSize)
+                .ToListAsync();
+
+            if (cardModelList.Count == 0)
+            {
+                throw new NotFoundException(Resource.CardCouldNotFound);
+            }
+
+            return new CardListResponse
+            {
+                CardResponseList = _mapper.Map<List<CardResponse>>(cardModelList),
+                TotalItemCount = totalItemCount
+            };
+        }
+
+        public async Task DeleteCard(string userKey, long id)
+        {
+            _userAuthorizationService.CheckUserPermission(userKey);
+            long userId = _userAuthorizationService.ConvertUserKeyToUserResponse(userKey).Id;
+
+            var cardModel = await _cardRepository.GetItem(m => m.UserId == userId && m.Id == id);
+
+            if (cardModel == null)
+            {
+                throw new NotFoundException(Resource.CardCouldNotFound);
+            }
+
+            cardModel.IsDeleted = true;
+            cardModel.DeleteDate = DateTime.UtcNow;
+
+            await _cardRepository.Update(cardModel);
         }
     }
 }
