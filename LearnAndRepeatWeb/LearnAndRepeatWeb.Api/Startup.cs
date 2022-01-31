@@ -8,6 +8,7 @@ using LearnAndRepeatWeb.Business.Services.Implementations;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Business.Validators.User;
 using LearnAndRepeatWeb.Infrastructure.AppDbContextSection;
+using LearnAndRepeatWeb.Infrastructure.DatabaseMigrations;
 using LearnAndRepeatWeb.Infrastructure.Repositories.Card;
 using LearnAndRepeatWeb.Infrastructure.Repositories.User;
 using MassTransit;
@@ -114,6 +115,8 @@ namespace LearnAndRepeatWeb.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LearnAndRepeatWeb.Api v1"));
             }
 
+            FluentMigratorConfigurator.MigrateUp(Configuration.GetConnectionString("LearnAndRepeatWebSqlServerConnectionString"));
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -126,7 +129,6 @@ namespace LearnAndRepeatWeb.Api
                 endpoints.MapControllers();
             });
         }
-
     }
 
     public static class ConfigurationExtensionMethods
