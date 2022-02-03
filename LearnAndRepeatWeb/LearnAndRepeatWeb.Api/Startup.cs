@@ -1,5 +1,5 @@
 using FluentValidation.AspNetCore;
-using GreenPipes;
+//using GreenPipes;
 using LearnAndRepeatWeb.Business.ConfigModels;
 using LearnAndRepeatWeb.Business.Constants;
 using LearnAndRepeatWeb.Business.Consumers.User;
@@ -11,7 +11,7 @@ using LearnAndRepeatWeb.Infrastructure.AppDbContextSection;
 using LearnAndRepeatWeb.Infrastructure.DatabaseMigrations;
 using LearnAndRepeatWeb.Infrastructure.Repositories.Card;
 using LearnAndRepeatWeb.Infrastructure.Repositories.User;
-using MassTransit;
+//using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -83,7 +83,7 @@ namespace LearnAndRepeatWeb.Api
             services.AddAutoMapper(typeof(UserMappingProfile));
             services.ConfigureConfigSectionModels(Configuration);
             services.ConfigureJwtAuthentication(Configuration);
-            services.ConfigureMassTransit();
+            //services.ConfigureMassTransit();
 
             if (HostEnvironment.IsEnvironment("Test"))
             {
@@ -161,33 +161,33 @@ namespace LearnAndRepeatWeb.Api
             });
         }
 
-        public static void ConfigureMassTransit(this IServiceCollection services)
-        {
-            services.AddMassTransit(x =>
-            {
-                x.AddConsumer<UserConfirmationTokenCreatorConsumer>();
-                x.AddConsumer<UserTransactionalEmailSenderConsumer>();
+        //public static void ConfigureMassTransit(this IServiceCollection services)
+        //{
+        //    services.AddMassTransit(x =>
+        //    {
+        //        x.AddConsumer<UserConfirmationTokenCreatorConsumer>();
+        //        x.AddConsumer<UserTransactionalEmailSenderConsumer>();
 
-                x.SetKebabCaseEndpointNameFormatter();
+        //        x.SetKebabCaseEndpointNameFormatter();
 
-                x.UsingRabbitMq((context, cfg) => {
-                    cfg.UseMessageRetry(r => r.Incremental(3, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5)));
+        //        x.UsingRabbitMq((context, cfg) => {
+        //            cfg.UseMessageRetry(r => r.Incremental(3, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5)));
 
 
-                    cfg.ReceiveEndpoint("ConfirmationEmailSenderConsumerQueue", e =>
-                    {
-                        e.ConfigureConsumer<UserConfirmationTokenCreatorConsumer>(context);
-                    });
+        //            cfg.ReceiveEndpoint("ConfirmationEmailSenderConsumerQueue", e =>
+        //            {
+        //                e.ConfigureConsumer<UserConfirmationTokenCreatorConsumer>(context);
+        //            });
 
-                    cfg.ReceiveEndpoint("UserTransactionalEmailSenderConsumerQueue", e =>
-                    {
-                        e.ConfigureConsumer<UserTransactionalEmailSenderConsumer>(context);
-                    });
-                });
-            });
+        //            cfg.ReceiveEndpoint("UserTransactionalEmailSenderConsumerQueue", e =>
+        //            {
+        //                e.ConfigureConsumer<UserTransactionalEmailSenderConsumer>(context);
+        //            });
+        //        });
+        //    });
 
-            services.AddMassTransitHostedService();
-        }
+        //    services.AddMassTransitHostedService();
+        //}
     }
 
 }

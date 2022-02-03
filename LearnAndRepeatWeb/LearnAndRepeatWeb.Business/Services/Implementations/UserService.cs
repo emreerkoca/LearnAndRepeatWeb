@@ -3,18 +3,16 @@ using LearnAndRepeatWeb.Business.ConfigModels;
 using LearnAndRepeatWeb.Business.CustomExceptions;
 using LearnAndRepeatWeb.Business.Resources;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
-using LearnAndRepeatWeb.Contracts.Events.User;
 using LearnAndRepeatWeb.Contracts.Requests.User;
 using LearnAndRepeatWeb.Contracts.Responses.User;
 using LearnAndRepeatWeb.Infrastructure.Entities.User;
 using LearnAndRepeatWeb.Infrastructure.Repositories.User;
-using MassTransit;
+//using MassTransit;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -28,16 +26,16 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
         private readonly IUserTokenRepository _userTokenRepository;
         private readonly IMapper _mapper;
         private readonly UserConfigSectionModel _userConfigSectionModel;
-        private readonly IBusControl _busControl;
+        //private readonly IBusControl _busControl;
         private readonly IUserAuthorizationService _userAuthorizationService;
 
-        public UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions, IBusControl busControl, IUserAuthorizationService userAuthorizationService)
+        public UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IMapper mapper, IOptions<UserConfigSectionModel> userConfigSectionModelOptions, /*IBusControl busControl,*/ IUserAuthorizationService userAuthorizationService)
         {
             _userRepository = userRepository;
             _userTokenRepository = userTokenRepository;
             _mapper = mapper;
             _userConfigSectionModel = userConfigSectionModelOptions.Value;
-            _busControl = busControl;
+            //_busControl = busControl;
             _userAuthorizationService = userAuthorizationService;
         }
 
@@ -71,10 +69,10 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
             UserResponse userResponse = _mapper.Map<UserResponse>(userModel);
 
-            await _busControl.Publish(new UserCreatedEvent
-            {
-                UserResponse = userResponse
-            });
+            //await _busControl.Publish(new UserCreatedEvent
+            //{
+            //    UserResponse = userResponse
+            //});
 
             return userResponse;
         }
@@ -145,10 +143,10 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
             await _userTokenRepository.Update(tokenModel);
             
-            await _busControl.Publish(new UserConfirmedEvent
-            {
-                UserId = userId
-            });
+            //await _busControl.Publish(new UserConfirmedEvent
+            //{
+            //    UserId = userId
+            //});
         }
 
         public async Task<AuthenticationTokenResponse> PostAuthenticationToken(PostAuthenticationTokenRequest postAuthenticationTokenRequest)
@@ -213,10 +211,10 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
             UserTokenResponse userTokenResponse = _mapper.Map<UserTokenResponse>(userTokenModel);
 
-            await _busControl.Publish(new UserTokenCreatedEvent
-            {
-                UserTokenResponse = userTokenResponse
-            });
+            //await _busControl.Publish(new UserTokenCreatedEvent
+            //{
+            //    UserTokenResponse = userTokenResponse
+            //});
 
             return userTokenResponse;
         }

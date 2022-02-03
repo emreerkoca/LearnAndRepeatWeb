@@ -2,12 +2,12 @@
 using LearnAndRepeatWeb.Business.CustomExceptions;
 using LearnAndRepeatWeb.Business.Resources;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
-using LearnAndRepeatWeb.Contracts.Events.Card;
+//using LearnAndRepeatWeb.Contracts.Events.Card;
 using LearnAndRepeatWeb.Contracts.Requests.Card;
 using LearnAndRepeatWeb.Contracts.Responses.Card;
 using LearnAndRepeatWeb.Infrastructure.Entities.Card;
 using LearnAndRepeatWeb.Infrastructure.Repositories.Card;
-using MassTransit;
+//using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,14 +20,14 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
     {
         private readonly ICardRepository _cardRepository;
         private readonly IMapper _mapper;
-        private readonly IBusControl _busControl;
+        //private readonly IBusControl _busControl;
         private readonly IUserAuthorizationService _userAuthorizationService;
 
-        public CardService(ICardRepository cardRepository, IMapper mapper, IBusControl busControl, IUserAuthorizationService userAuthorizationService)
+        public CardService(ICardRepository cardRepository, IMapper mapper, /*IBusControl busControl,*/ IUserAuthorizationService userAuthorizationService)
         {
             _cardRepository = cardRepository;
             _mapper = mapper;
-            _busControl = busControl;
+            //_busControl = busControl;
             _userAuthorizationService = userAuthorizationService;
         }
 
@@ -50,10 +50,10 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
             CardResponse cardResponse = _mapper.Map<CardResponse>(cardModel);
 
-            await _busControl.Publish(new CardCreatedEvent
-            {
-                CardResponse = cardResponse
-            });
+            //await _busControl.Publish(new CardCreatedEvent
+            //{
+            //    CardResponse = cardResponse
+            //});
 
             return cardResponse;
         }
