@@ -1,4 +1,5 @@
 ﻿using FluentMigrator.Runner;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -6,23 +7,9 @@ namespace LearnAndRepeatWeb.Infrastructure.DatabaseMigrations
 {
     public class FluentMigratorConfigurator
     {
-        private const string connectionString = "Server=(localdb)\\mssqllocaldb;Integrated Security=true;Initial Catalog=LearnAndRepeatWeb;";
-
-        public static void MigrateUp()
+        public static void MigrateUp(string connectionString)
         {
-            var serviceProvider = CreateServices();
-
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-
-                runner.MigrateUp();
-            }
-        }
-
-        private static IServiceProvider CreateServices()
-        {
-            return new ServiceCollection()
+            var serviceProvider = new ServiceCollection()
                 .AddFluentMigratorCore()
                 .ConfigureRunner(migrationRunnerBuilder => migrationRunnerBuilder
                     .AddSqlServer()
@@ -30,6 +17,13 @@ namespace LearnAndRepeatWeb.Infrastructure.DatabaseMigrations
                     .ScanIn(typeof(FluentMigratorConfigurator).Assembly).For.Migrations())
                 .AddLogging(loggingBuilder => loggingBuilder.AddFluentMigratorConsole())
                 .BuildServiceProvider(false);
+
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
+
+                runner.MigrateUp();
+            }
         }
     }
 }

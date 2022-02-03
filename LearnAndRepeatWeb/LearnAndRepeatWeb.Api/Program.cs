@@ -1,4 +1,3 @@
-using LearnAndRepeatWeb.Infrastructure.DatabaseMigrations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -8,8 +7,6 @@ namespace LearnAndRepeatWeb.Api
     {
         public static void Main(string[] args)
         {
-            FluentMigratorConfigurator.MigrateUp();
-
             CreateHostBuilder(args).Build().Run();
         }
 
