@@ -3,7 +3,7 @@ using LearnAndRepeatWeb.Contracts.Requests.Card;
 
 namespace LearnAndRepeatWeb.Business.Validators.Card
 {
-    public class PostCardRequestValidator : AbstractValidator<PostCardRequest>
+    public class PostCardRequestValidator : AbstractValidatorCustomized<PostCardRequest>
     {
         public PostCardRequestValidator()
         {

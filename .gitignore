@@ -259,3 +259,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/LearnAndRepeatWeb/LearnAndRepeatWeb.Api/.config/dotnet-tools.json
+/LearnAndRepeatWeb/LearnAndRepeatWeb.Api/Properties/PublishProfiles/LearnAndRepeatWebApi20220122141948 - Web Deploy.pubxml
+/LearnAndRepeatWeb/LearnAndRepeatWeb.Api/Properties/ServiceDependencies/LearnAndRepeatWebApi20220122141948 - Web Deploy/mssql1.arm.json
+/LearnAndRepeatWeb/LearnAndRepeatWeb.Api/Properties/serviceDependencies.LearnAndRepeatWebApi20220122141948 - Web Deploy.json
+/LearnAndRepeatWeb/LearnAndRepeatWeb.Api/Properties/serviceDependencies.json
+/LearnAndRepeatWeb/LearnAndRepeatWeb.Api/Properties/ServiceDependencies/LearnAndRepeatWebApi20220122141948 - Web Deploy/profile.arm.json

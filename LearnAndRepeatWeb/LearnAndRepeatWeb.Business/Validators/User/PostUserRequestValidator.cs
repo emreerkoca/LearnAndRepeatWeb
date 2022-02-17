@@ -3,7 +3,7 @@ using LearnAndRepeatWeb.Contracts.Requests.User;
 
 namespace LearnAndRepeatWeb.Business.Validators.User
 {
-    public class PostUserRequestValidator : AbstractValidator<PostUserRequest>
+    public class PostUserRequestValidator : AbstractValidatorCustomized<PostUserRequest>
     {
         public PostUserRequestValidator()
         {

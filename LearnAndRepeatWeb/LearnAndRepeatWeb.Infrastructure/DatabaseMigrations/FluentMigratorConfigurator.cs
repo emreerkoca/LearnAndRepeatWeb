@@ -1,7 +1,5 @@
 ﻿using FluentMigrator.Runner;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace LearnAndRepeatWeb.Infrastructure.DatabaseMigrations
 {
