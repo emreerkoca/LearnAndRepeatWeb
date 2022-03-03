@@ -9,7 +9,6 @@ using LearnAndRepeatWeb.Business.Services.Implementations;
 using LearnAndRepeatWeb.Business.Services.Interfaces;
 using LearnAndRepeatWeb.Business.Validators.User;
 using LearnAndRepeatWeb.Infrastructure.AppDbContextSection;
-using LearnAndRepeatWeb.Infrastructure.DatabaseMigrations;
 using LearnAndRepeatWeb.Infrastructure.Repositories.Card;
 using LearnAndRepeatWeb.Infrastructure.Repositories.User;
 //using MassTransit;
@@ -98,7 +97,7 @@ namespace LearnAndRepeatWeb.Api
             else
             {
                 services.AddDbContext<AppDbContext>(options =>
-                   options.UseSqlServer(Configuration.GetConnectionString("LearnAndRepeatWebSqlServerConnectionString")));
+                    options.UseNpgsql(Configuration.GetConnectionString("LearnAndRepeatWebPostgreSQLConnectionString")));
             }
 
             services.AddScoped<IUserService, UserService>();
@@ -119,8 +118,6 @@ namespace LearnAndRepeatWeb.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LearnAndRepeatWeb.Api v1"));
             }
-
-            FluentMigratorConfigurator.MigrateUp(Configuration.GetConnectionString("LearnAndRepeatWebSqlServerConnectionString"));
 
             app.UseHttpsRedirection();
 
