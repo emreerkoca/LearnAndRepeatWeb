@@ -116,11 +116,7 @@ namespace LearnAndRepeatWeb.Api
                     var username = uri.UserInfo.Split(':')[0];
                     var password = uri.UserInfo.Split(':')[1];
 
-                    connectionString = "; Database=" + uri.AbsolutePath.Substring(1) 
-                        + "; Username=" + username 
-                        + "; Password=" + password 
-                        + "; Port=" + uri.Port 
-                        + "; SSL Mode=Require; Trust Server Certificate=true;";
+                    connectionString = $"Server={uri.Host}; Database={uri.AbsolutePath.Substring(1)}; Username={username}; Password= {password}; Port={uri.Port}; SSL Mode=Require; Trust Server Certificate=true;";
                 }
 
                 logger.LogInformation($"connectionString: {connectionString}");
