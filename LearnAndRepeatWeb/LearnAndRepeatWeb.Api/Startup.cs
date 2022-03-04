@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -100,12 +101,17 @@ namespace LearnAndRepeatWeb.Api
                 string connectionString = Configuration.GetConnectionString("LearnAndRepeatWebPostgreSQLConnectionString");
                 string envVar = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-                if (string.IsNullOrEmpty(envVar))
+                var loggerFactory = LoggerFactory.Create(builder =>
                 {
-                    connectionString = Configuration["Connectionstrings:database"];
-                }
-                else
+                    builder.AddConsole();
+                });
+
+                ILogger logger = loggerFactory.CreateLogger<Startup>();
+
+                if (!string.IsNullOrEmpty(envVar))
                 {
+                    logger.LogInformation($"envVar: {envVar}");
+
                     var uri = new Uri(envVar);
                     var username = uri.UserInfo.Split(':')[0];
                     var password = uri.UserInfo.Split(':')[1];
@@ -117,6 +123,7 @@ namespace LearnAndRepeatWeb.Api
                         + "; SSL Mode=Require; Trust Server Certificate=true;";
                 }
 
+                logger.LogInformation($"connectionString: {connectionString}");
 
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseNpgsql(connectionString));
