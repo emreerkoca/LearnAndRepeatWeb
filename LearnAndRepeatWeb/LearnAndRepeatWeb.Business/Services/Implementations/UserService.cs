@@ -211,6 +211,7 @@ namespace LearnAndRepeatWeb.Business.Services.Implementations
 
             UserTokenResponse userTokenResponse = _mapper.Map<UserTokenResponse>(userTokenModel);
 
+            //
             //await _busControl.Publish(new UserTokenCreatedEvent
             //{
             //    UserTokenResponse = userTokenResponse
