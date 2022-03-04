@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -96,8 +97,29 @@ namespace LearnAndRepeatWeb.Api
             }
             else
             {
+                string connectionString = Configuration.GetConnectionString("LearnAndRepeatWebPostgreSQLConnectionString");
+                string envVar = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+                if (string.IsNullOrEmpty(envVar))
+                {
+                    connectionString = Configuration["Connectionstrings:database"];
+                }
+                else
+                {
+                    var uri = new Uri(envVar);
+                    var username = uri.UserInfo.Split(':')[0];
+                    var password = uri.UserInfo.Split(':')[1];
+
+                    connectionString = "; Database=" + uri.AbsolutePath.Substring(1) 
+                        + "; Username=" + username 
+                        + "; Password=" + password 
+                        + "; Port=" + uri.Port 
+                        + "; SSL Mode=Require; Trust Server Certificate=true;";
+                }
+
+
                 services.AddDbContext<AppDbContext>(options =>
-                    options.UseNpgsql(Configuration.GetConnectionString("LearnAndRepeatWebPostgreSQLConnectionString")));
+                    options.UseNpgsql(connectionString));
             }
 
             services.AddScoped<IUserService, UserService>();
